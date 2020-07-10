@@ -13,6 +13,7 @@ const indexRouter = require('./routes/index')
 const mongoose = require('mongoose')
 const db = mongoose.connection
 
+
 //Specify 'ejs' as 'view-engine'.
 app.set('view engine', 'ejs')
 //Specify __dirname as 'views' with address '/views'.
@@ -26,13 +27,23 @@ app.use(expressLayouts)
 app.use(express.static('public'))
 app.use('/', indexRouter)
 
+app.get('/login', (req, res) => {
+  res.render('views/login.ejs')
+})
+app.get('/register', (req, res) => {
+  res.render('views/register.ejs')
+})
+
 //To listen connections from 'process.env.PORT' or port(3000).
 app.listen(process.env.PORT || 3000)
 
 //Connect to MongoDB
 //Use 'DATABASE_URL' to set the path in '.env' file. 
 mongoose.connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true //?Can be delete?
+  useNewUrlParser: true,
+  useUnifiedTopology: true,//?Can be delete?
+  useFindAndModify: false,//?Can be delete?
+  useCreateIndex: true//?Can be delete?
 })
 //To check and show whether there have any connection error.
 db.on('error', error => console.error(error))
