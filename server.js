@@ -11,6 +11,7 @@ const expressLayouts = require('express-ejs-layouts')
 const indexRouter = require('./routes/index')
 //MongoDB
 const mongoose = require('mongoose')
+const users = require('./models/users')
 const db = mongoose.connection
 
 
@@ -27,11 +28,13 @@ app.use(expressLayouts)
 app.use(express.static('public'))
 app.use('/', indexRouter)
 
+//Linked to the 'login' page.
 app.get('/login', (req, res) => {
   res.render('views/login.ejs')
 })
+//Linked to the 'register' page.
 app.get('/register', (req, res) => {
-  res.render('views/register.ejs')
+  res.render('views/register.ejs', { users: new users() })
 })
 
 //To listen connections from 'process.env.PORT' or port(3000).
