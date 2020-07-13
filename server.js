@@ -1,3 +1,14 @@
+//Save and update the local host:
+//npm run devStart
+
+//Upload to GitHub:
+//git add .
+//git commit -m "Testing"
+//git push
+
+//Update Heroku:
+//git push heroku master
+
 //To check we are in devlopment environment or not.
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()//'.load()' ===> '.config()'.
@@ -8,12 +19,13 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const expressLayouts = require('express-ejs-layouts')
-const indexRouter = require('./routes/index')
+const bodyParser = require('body-parser')//?
+const indexRouter = require('./routes/index')//?
+const usersRouter = require('./routes/users')//?
 //MongoDB
 const mongoose = require('mongoose')
 const users = require('./models/users')
 const db = mongoose.connection
-
 
 //Specify 'ejs' as 'view-engine'.
 app.set('view engine', 'ejs')
@@ -26,16 +38,10 @@ app.set('layout', 'views/layouts/layout')
 app.use(expressLayouts)
 //Serve static content for the app from the “public” directory.
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }))
+//?Set router path?
 app.use('/', indexRouter)
-
-//Linked to the 'login' page.
-app.get('/login', (req, res) => {
-  res.render('views/login.ejs')
-})
-//Linked to the 'register' page.
-app.get('/register', (req, res) => {
-  res.render('views/register.ejs', { users: new users() })
-})
+app.use('/users', usersRouter)
 
 //To listen connections from 'process.env.PORT' or port(3000).
 app.listen(process.env.PORT || 3000)
@@ -52,3 +58,14 @@ mongoose.connect(process.env.DATABASE_URL, {
 db.on('error', error => console.error(error))
 //To check whether the server is connected to MongoDB.
 db.once('open', () => console.log('Connected to Mongoose'))
+
+
+//vvv Ref vvv
+//Linked to the 'login' page.
+app.get('/login', (req, res) => {
+  res.render('views/login.ejs')
+})
+//Linked to the 'register' page.
+app.get('/register', (req, res) => {
+  res.render('views/register.ejs', { users: new users() })
+})
